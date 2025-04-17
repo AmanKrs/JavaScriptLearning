@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // console.log(elem);
     renderTodoTask(elem);
   });
+
+
   addTodoTask.addEventListener("click", () => {
     const todoTaskValue = todoInput.value.trim();
 
@@ -28,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //creating object for todo task
     const newTodoTask = {
       id: Date.now(),
-      task: todoTaskValue,
+      text: todoTaskValue,
       isCompleted: false,
     };
 
@@ -41,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderTodoTask(taskcreated) {
     console.log(taskcreated);
     let newTodo = document.createElement("li");
-    newTodo.textContent = taskcreated.task;
+    newTodo.textContent = taskcreated.text;
     let delbtn = document.createElement("button");
     delbtn.textContent = "Delete";
     newTodo.appendChild(delbtn);
