@@ -47,10 +47,10 @@ document.addEventListener("DOMContentLoaded", () => {
     newTodo.appendChild(delbtn);
     todoList.appendChild(newTodo);
   }
-
+ 
   function saveTask() {
     localStorage.setItem("todoToken", JSON.stringify(tasks));
   }
 
-  
+
 });
