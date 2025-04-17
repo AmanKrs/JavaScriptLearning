@@ -12,13 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
     tasks = JSON.parse(taskList);
     // console.log(tasks);
   }
-  console.log(tasks);
+
+  //rendering all the task present in the local storage
 
   tasks.map((elem) => {
-    // console.log(elem);
     renderTodoTask(elem);
   });
-
 
   addTodoTask.addEventListener("click", () => {
     const todoTaskValue = todoInput.value.trim();
@@ -35,24 +34,49 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     tasks.push(newTodoTask);
-    saveTask();
+    saveTask(); // setting up local storage
     todoInput.value = ""; //clearing input value
-    renderTodoTask(newTodoTask);
+    renderTodoTask(newTodoTask); // rendering new task
   });
 
+  //creating function for rendering the tasks on dom
   function renderTodoTask(taskcreated) {
-    console.log(taskcreated);
+    //creating new li elements
     let newTodo = document.createElement("li");
-    newTodo.textContent = taskcreated.text;
-    let delbtn = document.createElement("button");
-    delbtn.textContent = "Delete";
-    newTodo.appendChild(delbtn);
+    //setting up some ids to li
+    newTodo.setAttribute("data-id", taskcreated.id);
+    //setting class name if task is completed
+    if (taskcreated.isCompleted) {
+      newTodo.classList.add("completed");
+    }
+    //adding list content with span & button
+    newTodo.innerHTML = `<span>${taskcreated.text}</span> <button>Delete</button>`;
+
+    //adding event on clicking the list item but not on button
+    newTodo.addEventListener("click", (e) => {
+      if (e.target.tagName === "BUTTON") {
+        return;
+      }
+      taskcreated.isCompleted = !taskcreated.isCompleted;
+      newTodo.classList.toggle("completed"); // toggling classname to having toggle style
+      saveTask(); // setting up local storage
+    });
+
+    //adding event to only button inside the list element(here newTodo)
+    newTodo.querySelector("button").addEventListener("click", (e) => {
+      e.stopPropagation(); //stopping to bubble-up to the parents
+
+      //filtering out the clicked item
+      tasks = tasks.filter((elem) => elem.id !== taskcreated.id);
+      newTodo.remove(); //removing from the list content
+      saveTask(); // setting up local storage
+    });
+    //adding all the list tasked to rendering ul element
     todoList.appendChild(newTodo);
   }
- 
+
+  //function for setting local storage with task list
   function saveTask() {
     localStorage.setItem("todoToken", JSON.stringify(tasks));
   }
-
-
 });
