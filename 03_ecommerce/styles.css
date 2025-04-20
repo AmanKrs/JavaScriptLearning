@@ -81,3 +81,15 @@ h2 {
 .hidden {
   display: none;
 }
+.itemsIncart {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.itemsIncart > button {
+  background: transparent;
+  border: none;
+  color: red;
+  cursor: pointer;
+}

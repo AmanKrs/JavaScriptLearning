@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: 3, name: "Product 3", price: 59.999 },
   ];
 
-  const cart = [];
+  let cart = [];
 
   const productList = document.getElementById("product-list");
   const cartItems = document.getElementById("cart-items");
@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const addProductBtn = document.createElement("button");
     addProductBtn.setAttribute("data-id", product.id);
     addProductBtn.textContent = `Add to Cart`;
-
     productDiv.appendChild(productName);
     productDiv.appendChild(addProductBtn);
 
@@ -32,9 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   productList.addEventListener("click", (e) => {
     if (e.target.tagName === "BUTTON") {
       const productId = parseInt(e.target.getAttribute("data-id"));
-      console.log(productId);
       const getCartItem = products.filter((elem) => elem.id === productId);
-
       addToCart(...getCartItem);
     }
   });
@@ -52,13 +49,14 @@ document.addEventListener("DOMContentLoaded", () => {
       emptyCartMessage.classList.add("hidden");
       cartTotalMessage.classList.remove("hidden");
 
-      cart.forEach((item) => {
+      cart.forEach((item,idx) => {
         totalPrice += item.price;
-
         const itemInCart = document.createElement("div");
-
-        itemInCart.innerHTML = `${item.name}  ${item.price}`;
-
+        itemInCart.innerHTML = `
+        <span>${item.name}  ${item.price}</span> 
+        <button class="material-icons" data-id=${idx} >&#xe872;</button>
+        `;
+        itemInCart.classList.add("itemsIncart");
         cartItems.appendChild(itemInCart);
         totalPriceDisplay.textContent = `${totalPrice.toFixed(2)}`;
       });
@@ -72,4 +70,19 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("Checkout successfully");
     renderCart();
   });
+
+  //delete from cart functionality
+
+  cartItems.addEventListener("click", (e) => {
+    if (e.target.tagName === "BUTTON") {
+      const removeItemId = parseInt(e.target.getAttribute("data-id"));
+      console.log(removeItemId);
+      cart = cart.filter((elem,idx) => idx !== removeItemId);
+      console.log(cart);
+      renderCart();
+     
+    }
+  });
+
+  
 });
