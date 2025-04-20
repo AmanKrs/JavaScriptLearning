@@ -6,48 +6,68 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalExpDiv = document.getElementById("total");
   const totalAmnt = document.getElementById("total-amount");
 
-  let expenseTotalArr = [];
+  let expenseArr = JSON.parse(localStorage.getItem("expense")) || [];
+
+  renderExpense();
+
   formValue.addEventListener("submit", (e) => {
     e.preventDefault();
     const expnsName = expenseNameInput.value.trim();
-    const expnsAmnt = expenseAmntInput.value.trim();
-    expenseTotalArr.push(parseInt(expnsAmnt));
-    console.log("formvalue  ", expnsName, expnsAmnt);
-    const expenseValue = document.createElement("li");
-   
-    expenseValue.innerHTML = `
-    <span>${expnsName} - $${expnsAmnt}</span>
-    <button data-id=${expnsAmnt}>Delete</button>
-    `;
-    showTotalExpense();
-    expenseList.appendChild(expenseValue);
+    const expnsAmnt = parseFloat(expenseAmntInput.value);
+    if (expnsName !== "" && !isNaN(expnsAmnt) && expnsAmnt > 0) {
+      const expense = {
+        id: Date.now(),
+        name: expnsName,
+        amount: expnsAmnt,
+      };
+      expenseArr.push(expense);
+      renderExpense();
+      saveToLocal();
+    }
+    //clearing Input
+    expenseNameInput.value = "";
+    expenseAmntInput.value = "";
   });
 
   expenseList.addEventListener("click", (e) => {
     if (e.target.tagName === "BUTTON") {
-      const deleteExpnsValue = parseInt(e.target.getAttribute("data-id"));
-      console.log(deleteExpnsValue);
-      expenseTotalArr = expenseTotalArr.filter(
-        (elem) => elem !== deleteExpnsValue
-      );
+      const deleteExpns = parseInt(e.target.getAttribute("data-id"));
 
+      expenseArr = expenseArr.filter((elem) => elem.id !== deleteExpns);
+      saveToLocal();
+      renderExpense();
       showTotalExpense();
     }
   });
 
+  function renderExpense() {
+    expenseList.innerHTML = "";
+    expenseArr.forEach((expense) => {
+      const expenseValue = document.createElement("li");
+
+      expenseValue.innerHTML = `
+    <span>${expense.name} - $${expense.amount}</span>
+    <button data-id=${expense.id}>Delete</button>
+    `;
+      showTotalExpense();
+      expenseList.appendChild(expenseValue);
+    });
+  }
   function showTotalExpense() {
     const totalExpense = calculateExpense();
     console.log(totalExpense);
-    totalAmnt.textContent = totalExpense;
+    totalAmnt.textContent = totalExpense.toFixed(2);
   }
 
   function calculateExpense() {
-    const totalExpns = expenseTotalArr.reduce((acc, curr) => {
-      acc += curr;
+    const totalExpns = expenseArr.reduce((acc, curr) => {
+      acc += curr.amount;
       return acc;
     }, 0);
     return totalExpns;
   }
 
-  function deleteExpense(params) {}
+  function saveToLocal() {
+    localStorage.setItem("expense", JSON.stringify(expenseArr));
+  }
 });
