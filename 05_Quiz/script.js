@@ -31,4 +31,59 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   ];
 
+  let currentQuestion = 0;
+  let score = 0;
+  startBtn.addEventListener("click", startQuiz);
+
+  function startQuiz() {
+    startBtn.classList.add("hidden");
+    resultContainer.classList.add("hidden");
+    questionContainer.classList.remove("hidden");
+    showQuestion();
+  }
+
+  function showQuestion() {
+    nextBtn.classList.add("hidden");
+    questionText.textContent = questions[currentQuestion].question;
+    choicesList.innerHTML = "";
+    questions[currentQuestion].choices.forEach((choice) => {
+      const li = document.createElement("li");
+      li.textContent = choice;
+      li.addEventListener("click", () => {
+        selectAnswer(choice);
+      });
+
+      choicesList.appendChild(li);
+    });
+  }
+
+  function selectAnswer(choice) {
+    const correctAnswer = questions[currentQuestion].answer;
+    if (correctAnswer === choice) {
+      score++;
+    }
+    nextBtn.classList.remove("hidden");
+  }
+
+  nextBtn.addEventListener("click", () => {
+    currentQuestion++;
+    if (currentQuestion <= questions.length - 1) {
+      showQuestion();
+    } else {
+      showResult();
+      nextBtn.classList.add("hidden");
+      questionContainer.classList.add("hidden");
+      resultContainer.classList.remove("hidden");
+    }
+  });
+
+  function showResult() {
+    scoreDisplay.textContent = `${score} out of ${questions.length}`;
+  }
+
+  restartBtn.addEventListener("click", () => {
+    currentQuestion = 0;
+    score = 0;
+    startQuiz();
+  });
 });
